@@ -5,4 +5,8 @@
 
 | Файл | Что в нём |
 |---|---|
-| — | пока пусто |
+| `core.h` | структура данных и объявление функции |
+| `core_info.c` | сведения о системе и время её работы |
+| `show_info.c` | проверка ядра из C |
+
+В Windows сборка библиотеки из x64 Native Tools Command Prompt: `cl /nologo /W4 /LD core_info.c /Fe:sentry_core.dll`.

@@ -1,0 +1,136 @@
+{
+  "name": "Agent uptime",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "94c2be84-20e6-4f64-9eb2-6c86af3fb223",
+      "name": "Webhook",
+      "webhookId": "416b181f-7fcb-45b7-b04f-f74baa31fe0e"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ты помощник администратора. Агент прислал данные компьютера.\nОбъясни простыми словами по-русски в 2–3 предложениях, сколько компьютер\nработает без перезагрузки и стоит ли его перезагрузить.\nПиши только по-русски. Не пересчитывай числа, бери их как есть.\nКомпьютер: {{ $json.body.host }}.\nРаботает без перезагрузки: {{ Math.floor($json.body.uptime_s / 86400) }} дн. {{ Math.floor($json.body.uptime_s % 86400 / 3600) }} ч.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        0
+      ],
+      "id": "694f1dde-35df-45ad-847d-304c999c3e6d",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "google/gemma-4-26b-a4b-qat",
+          "mode": "list",
+          "cachedResultName": "google/gemma-4-26b-a4b-qat"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        208
+      ],
+      "id": "3e57331d-fbef-4f24-aa6d-2aea2e04cd70",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Q70u9I8lJmWDFWzp",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "basyya788@gmail.com",
+        "toEmail": "basyya788@gmail.com",
+        "subject": "Агент запущен",
+        "emailFormat": "text",
+        "text": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        592,
+        0
+      ],
+      "id": "873ba5d1-1d79-4b8e-9722-6d4652df6c8f",
+      "name": "Send an Email",
+      "webhookId": "6bf408b4-665e-47a3-8e00-6298944de40c",
+      "credentials": {
+        "smtp": {
+          "id": "3lZFU8tlFVKSajO8",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e3d03900-8841-4728-a0d3-966a1ae63828",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4ac33cb93a22659386b2ca4337d2c396fa24fe46745d500aa4f8ffd1744fec59"
+  },
+  "nodeGroups": [],
+  "id": "Tl737Be1r7IsADKm",
+  "tags": []
+}
